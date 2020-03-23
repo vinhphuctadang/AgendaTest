@@ -1,4 +1,33 @@
-const Scheduler=require('./scheduler') // 5 second chunk
-const scheduler = new Scheduler(5)
-scheduler.triggerAt(Date.now()/1000+2,(args)=>{console.log(args);},{toPrint:'hello world'});
-scheduler.triggerAt(Date.now()/1000+7,(args)=>{console.log(args);},{toPrint:'HELL world'});
+const express = require('express')
+const app = express()
+const port = 80
+const bodyParser = require('body-parser');
+
+// support parsing of application/json type post data
+app.use(bodyParser.json());
+//support parsing of application/x-www-form-urlencoded post data
+app.use(bodyParser.urlencoded({ extended: true }));
+
+app.get('/',(req,res)=>{
+    res.send('Hello World!')
+})
+
+function should(){
+    return async (req,res,next)=>{
+        if(!req.body.int){
+            res.send('Require "int"')
+            return
+        };
+        next()
+    }
+}
+app.post('/',
+    should(), 
+    async(req,res)=>{
+        res.send(req.body)
+    }
+)
+
+app.listen(port,()=>{
+    console.log(`Example app listening on port ${port}!`)
+})

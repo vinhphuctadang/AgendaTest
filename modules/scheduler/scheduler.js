@@ -3,11 +3,17 @@
  * 
  * 1. Use agenda to schedule the task: Every date collecting keys that needs to be revoked (1 db) + 1 extra db query of agenda
  * 2. Use artifical timer pool to schedule task to revoke key: divide a day into time-chunks so that expired key could be withdraw at the specified chunk
- *  No matter how much key we have, if we made timechunk be 5 minutes, there always 288 interval a day at max (or 144 if chunks have 10-min length)
+ * For key revocation/notifications
+ *  No matter how much key/nofti we have, if we made timechunk be 5 minutes, there always 288 interval a day at max (or 144 if chunks have 10-min length)
+ *  Save more db storage as key increase 
  */
 class Scheduler {
-	constructor(chunk){
-		this.ADAY = 86400
+	/**
+	 * Init scheduler with a specific chunk length for a day timer tasks
+	 * @param {Integer} chunk 
+	 */
+	constructor(chunk = 5*60, period = 86400){
+		this.ADAY = period
 		this.TimeChunksManager = new Array(parseInt(this.ADAY/chunk)).fill(0)
 		this.chunk = chunk // in second
 	}
